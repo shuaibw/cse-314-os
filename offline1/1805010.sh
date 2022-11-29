@@ -1,16 +1,25 @@
 #!/usr/bin/bash
+# set first arg 100 if empty
+if [ -z "$1" ]; then
+    set -- 100
+fi
+# set second arg 5 if empty
+if [ -z "$2" ]; then
+    set -- "$1" 5
+fi
 
-# default 100 if number of arguments is not 1
-if [ $# -ne 1 ]; then
-    set 100
 # exit 2 if $1 is not a number
-elif ! [[ $1 =~ ^[+-]?[0-9]+$ ]]; then
+if ! [[ $1 =~ ^[+-]?[0-9]+$ ]]; then
     echo "\$1 must be a number"
     exit 2
-# exit 3 if $1 is less than 0
+# exit 3 if $2 is not a number
+elif ! [[ $2 =~ ^[+-]?[0-9]+$ ]]; then
+    echo "\$2 must be a number"
+    exit 3
+# exit 4 if $1 is less than 0
 elif [ $1 -le 0 ]; then
     echo "\$1 must be greater than 0"
-    exit 3
+    exit 4
 fi
 
 # output csv
@@ -18,13 +27,19 @@ output=$'student_id,score\n'
 # store contents of AcceptedOutput.txt in a variable
 ref=$(cat AcceptedOutput.txt)
 
-
+end=$(($2 + 1805120))
 # iterate over the shell scripts in Submissions folder and run each of them
-for file in Submissions/*/*.sh
+for ((i=1805121;i<=end;i++))
 do
     score=$1
+    file=Submissions/$i/$i.sh
     filename=$(basename "${file}")
     dirname=$(basename $(dirname "${file}"))
+    # continue if file doesn't exist
+    if [ ! -f "$file" ]; then
+        echo "File $filename does not exist"
+        continue
+    fi
     # check if filename is properly named
     if ! [[ $filename =~ ^1805[0-9]{3}\.sh$ ]]; then
         echo "Invalid student id: $filename"
