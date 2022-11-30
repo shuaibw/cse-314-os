@@ -22,6 +22,11 @@ elif [ $1 -le 0 ]; then
     exit 4
 fi
 
+# unzip Submissions.zip
+unzip Submissions.zip
+# remove Submissions.zip
+# rm Submissions.zip
+
 # output csv
 output=$'student_id,score\n'
 # store contents of AcceptedOutput.txt in a variable
